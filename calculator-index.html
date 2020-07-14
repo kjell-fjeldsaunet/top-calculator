@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculator</title>
     <link rel="stylesheet" href="calculator-style.css">
-    <script src="calculator-script.js"></script>
+
 </head>
 
 <body>
@@ -16,11 +16,12 @@
     <main>
         <div class="calculator-container">
             <div class="screen-container">
-                <div class="screen history-screen">
+                <div class="screen" id="history-screen">
                     125
                 </div>
-                <div class="screen current-screen">
-                    12321
+                <div class="screen" id="current-screen">
+                    <div class="operator-display">+</div>
+                    <div class="current-value-display">1235</div>
                 </div>
             </div>
             <div class="buttons-container">
@@ -50,5 +51,7 @@
         3
     </footer>
 </body>
+
+<script src="calculator-script.js"></script>
 
 </html>
