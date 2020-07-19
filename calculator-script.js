@@ -10,6 +10,13 @@ let historyValue = '';
 let currentValue = '0';
 let operatorSymbol = '';
 let currentOperation = '';
+const operatorSymbols = {
+    'add': '+',
+    'subtract': '-',
+    'multiply': 'x',
+    'divide': '/',
+    'equals': '=',
+}
 
 //----Populate DOM with values----
 historyScreen.textContent = historyValue;
@@ -18,6 +25,7 @@ operatorDisplay.textContent = operatorSymbol;
 
 //----Add functions to buttons----
 buttons.forEach(e => e.addEventListener('click', handleClick))
+document.addEventListener('keydown', handleKeyPress);
 
 //----Functions----
 function add(arg1, arg2) {
@@ -44,11 +52,16 @@ function operate(operator, num1, num2) {
         case 'multiply':
             return (multiply(num1, num2));
         case 'divide':
-            return divide(num1, num2);
-        case 'equals':
-            break
-        default:
+            if (num2 != 0) {
+                return divide(num1, num2);
+            } else {
+                return 'Not possible';
+            }
+
+        case 'add':
             return (add(num1, num2));
+        default:
+            return num2;
     }
 }
 
@@ -56,17 +69,26 @@ function roundFourDecimals(num) {
     return Math.round(num * 10000) / 10000;
 }
 
-const operatorSymbols = {
-    'add': '+',
-    'subtract': '-',
-    'multiply': 'x',
-    'divide': '/',
-    'equals': '=',
+//----Handle different inputs----
+function handleClick(event) {
+    runCalc(event.target.id);
 }
 
-function handleClick(event) {
-    const input = event.target.id;
-    console.log(input)
+function handleKeyPress(e) {
+    let keyInputArray = e.code.match(/[A-Z][a-z]+|[0-9]+/g);
+    let keyInput = keyInputArray[keyInputArray.length - 1].toLowerCase();
+    if (keyInput == 'enter') {
+        keyInput = 'equals';
+    }
+    runCalc(keyInput);
+}
+
+//----Main calculation function----
+function runCalc(input) {
+    if (currentValue == 'Not possible') {
+        historyValue = '';
+        currentValue = '0';
+    }
     switch (input) {
         case '1':
         case '2':
@@ -80,7 +102,7 @@ function handleClick(event) {
         case '0':
             if (operatorSymbol == '=') {
                 currentValue = '0';
-                historyValue = '';
+                //historyValue = '';
                 operatorSymbol = '';
             }
             if (currentValue == '0') {
@@ -89,7 +111,7 @@ function handleClick(event) {
                 currentValue += input;
             }
             break;
-        case 'dot':
+        case 'decimal':
             if (operatorSymbol == '=') {
                 currentValue = '0';
                 historyValue = '';
@@ -103,10 +125,15 @@ function handleClick(event) {
         case 'subtract':
         case 'multiply':
         case 'divide':
-            historyValue = operate(currentOperation, +historyValue, +currentValue);
-            currentValue = '0';
-            currentOperation = input;
-            operatorSymbol = operatorSymbols[input];
+            if (currentValue != '0') {
+                historyValue = operate(currentOperation, +historyValue, +currentValue);
+                currentValue = '0';
+                //let nexthistoryValue += ` ${operatorSymbol} ${currentValue}`
+                //currentValue = operate(currentOperation, +historyValue, +currentValue)
+                currentOperation = input;
+                operatorSymbol = operatorSymbols[input];
+            }
+
             break;
         case 'equals':
             operatorSymbol = operatorSymbols[input];
@@ -114,6 +141,9 @@ function handleClick(event) {
             historyValue = currentValue;
             currentOperation = input;
             break;
+        case 'pi':
+            currentValue = '3.1416'
+            break
         case 'ce':
             historyValue = ''
         case 'c':
